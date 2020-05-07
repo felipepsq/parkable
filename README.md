@@ -1,6 +1,6 @@
 # ParkAble
 
-Projeto designado a aplicação no trabalho de conclusão de curso no curso de Ciências da Computação - IMED Campus Passo Fundo. Seu intuito é de ajudar pessoas com mobilidade reduzida, como deficientes e idosos, na busca por uma vaga de estacionamento na cidade de Marau (RS - Brasil), auxiliando na mobilidade urbana.
+Projeto designado à aplicação no curso de Ciências da Computação da Faculdade IMED (Campus Passo Fundo), voltado a disciplina de trabalho de conclusão de curso.Seu intuito é de ajudar pessoas com mobilidade reduzida, como deficientes e idosos, na busca por uma vaga de estacionamento na cidade de Marau (RS - Brasil), auxiliando na mobilidade urbana.
 
 O desenvolvimento deste aplicativo teve como linguagem de programação o JavaScript, juntamente com a biblioteca React Native e suas dependências. Foi totalmente desenvolvido em ambiente Linux, rodando em cima da plataforma iOS, e com o apoio da ferramenta Open Source denominada Expo.
 
