@@ -19,6 +19,7 @@ export default props => {
                 props.component.setCalcDistance(true)
                 setTimeout(() => {
                     props.component.goToCurrentLocation(false, true)
+                    props.component.directionsConfig(null)
                 }, 1000);
             }}
             onError={(errorMessage) => { }}
