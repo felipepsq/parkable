@@ -64,8 +64,25 @@ export default class Logon extends Component {
             <ImageBackground source={backgroundImage}
                 style={styles.background}>
                 <Image style={styles.parkAbleIcon} source={ParkAbleIcon} />
+
                 {this.state.loading ? <ActivityIndicator style={styles.activityIndicator} size="large" color="#2c3e50" /> : null}
+
                 <KeyboardAvoidingView behavior="padding">
+
+                    <TouchableOpacity
+                        style={[styles.buttonTop, {
+                            padding: this.state.stageNew ? 10 : 9,
+                            marginRight: this.state.stageNew ? 18 : 5,
+                            marginBottom: this.state.stageNew ? -3 : 0,
+                        }]}
+                        onPress={() => this.setState({
+                            stageNew: !this.state.stageNew
+                        })}>
+                        <Text style={styles.buttonTextTop}>
+                            {this.state.stageNew ? 'Login'
+                                : 'Cadastrar'}</Text>
+                    </TouchableOpacity>
+
                     <View style={styles.container}>
                         <AuthInput icon='at' placeholder='E-mail'
                             style={styles.input}
@@ -91,14 +108,6 @@ export default class Logon extends Component {
                                 <Text style={styles.buttonText}>
                                     {this.state.stageNew ? 'Registrar' : 'Entrar'}</Text>
                             </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ padding: 10 }}
-                            onPress={() => this.setState({
-                                stageNew: !this.state.stageNew
-                            })}>
-                            <Text style={styles.buttonTextBottom}>
-                                {this.state.stageNew ? 'Já possui conta?'
-                                    : 'Ainda não possui conta?'}</Text>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
@@ -132,7 +141,8 @@ const styles = StyleSheet.create({
         top: 50
     },
     container: {
-        marginTop: 90,
+        marginTop: 5,
+        marginBottom: 20
     },
     formContainer: {
         padding: 25,
@@ -147,15 +157,22 @@ const styles = StyleSheet.create({
         marginTop: 10,
         padding: 10,
         alignItems: 'center',
+        borderRadius: 10
     },
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 20
     },
-    buttonTextBottom: {
-        color: 'black',
+    buttonTop: {
+        borderRadius: 10,
+        backgroundColor: '#303952',
+        width: '50%',
+        alignSelf: "flex-end"
+    },
+    buttonTextTop: {
+        color: 'white',
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 16
     }
 })
