@@ -9,11 +9,13 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/MaterialIcons'
-
 export default class Faq extends Component {
 
-    state = {
-        fontLoaded: false,
+    constructor(props) {
+        super(props);
+        this.state = {
+            fontLoaded: false,
+        }
     }
 
     async UNSAFE_componentWillMount() {

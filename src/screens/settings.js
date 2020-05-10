@@ -10,8 +10,11 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 export default class Settings extends Component {
 
-    state = {
-        fontLoaded: false,
+    constructor(props) {
+        super(props);
+        this.state = {
+            fontLoaded: false,
+        }
     }
 
     async UNSAFE_componentWillMount() {

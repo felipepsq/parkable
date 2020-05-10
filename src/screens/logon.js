@@ -16,13 +16,17 @@ import ParkAbleIcon from '../../assets/imgs/icon.png'
 import { signup, signin } from '../utils/firebase'
 
 export default class Logon extends Component {
-    state = {
-        stageNew: false,
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        loading: false
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            stageNew: false,
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            loading: false
+        }
     }
 
     signup = async () => {
