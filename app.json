@@ -26,7 +26,8 @@
       "bundleIdentifier": "com.company",
       "config": {
         "googleMapsApiKey": "AIzaSyCGCawFue0Z9eeazfeEBY3Sg2dJ4-XAXoM"
-      }
+      },
+      "buildNumber": "1.0.0"
     }
   }
 }
