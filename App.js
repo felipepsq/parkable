@@ -46,7 +46,8 @@ const DrawerNavigator = createDrawerNavigator({
 		}
 	},
 }, {
-	initialRouteName: 'Loading'
+	initialRouteName: 'Loading',
+	unmountInactiveRoutes: true
 });
 
 export default createAppContainer(DrawerNavigator);
