@@ -34,12 +34,14 @@ export default class Map extends Component {
 			markers: [],
 			currentMarkerID: null,
 			directions: false,
+			directionsTrace: false,
 			heading: null,
 			calcDistance: false,
 			routeCoordinates: [],
 			lowAccuracy: false,
 		}
 		this.markers = []
+		this.markersInUse = []
 	}
 
 	getHeading = async () => {
@@ -52,7 +54,7 @@ export default class Map extends Component {
 					this.setState({ heading: e.magHeading })
 
 					// Location.watchHeadingAsync() stops watching
-					this.state.directions == 'trace' ?
+					this.state.directionsTrace ?
 						(this.mapView.animateCamera({
 							center: this.state.location,
 							heading: this.state.heading
@@ -307,6 +309,7 @@ export default class Map extends Component {
 								:
 								<Marker
 									tracksViewChanges={false}
+									ref={(ref) => this.markersInUse[index] = ref}
 									key={index}
 									coordinate={{
 										latitude: marker.currentMarkerCoord.latitude,
@@ -314,7 +317,7 @@ export default class Map extends Component {
 									}}
 									onPress={() =>
 										// fixed marker closes bug
-										this.markers[index].showCallout()
+										this.markersInUse[index].showCallout()
 									}
 									onDeselect={() => this.setState({ directions: false })}
 								>
