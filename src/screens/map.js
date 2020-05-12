@@ -44,6 +44,10 @@ export default class Map extends Component {
 		this.markersInUse = []
 	}
 
+	componentWillUnmount() {
+		this.mapView.key = 0
+	}
+
 	getHeading = async () => {
 		await Location.watchHeadingAsync(e => {
 			if (!this.state.heading) {
@@ -54,7 +58,7 @@ export default class Map extends Component {
 					this.setState({ heading: e.magHeading })
 
 					// Location.watchHeadingAsync() stops watching
-					this.state.directionsTrace ?
+					this.state.directionsTrace && this.mapView ?
 						(this.mapView.animateCamera({
 							center: this.state.location,
 							heading: this.state.heading
@@ -113,21 +117,23 @@ export default class Map extends Component {
 						routeCoordinates: this.state.routeCoordinates.concat([newCoordinate]),
 					});
 					let distance = getDistance(location, this.state.currentMarkerCoord)
-					// if (distance <= 25) {
-					setTimeout(() => {
-						this.setCalcDistance(false)
-						this.refs.ModalUsingSpace.setModalUsingSpace({
-							active: true,
-							sameUserUID: null
-						}, this.state.currentMarkerID)
-					}, 1);
+					// if (distance <= 25 && this.refs.ModalUsingSpace) {
+					if (this.refs.ModalUsingSpace) {
+						setTimeout(() => {
+							this.setCalcDistance(false)
+							this.refs.ModalUsingSpace.setModalUsingSpace({
+								active: true,
+								sameUserUID: null
+							}, this.state.currentMarkerID)
+						}, 1);
+					}
 					// }
 				}
 				else {
 					this.state.routeCoordinates.length != 0 ? this.setState({ routeCoordinates: [] }) : null
 				}
 
-				try {
+				if (this.refs.ModalUsingSpace) {
 					var currentMarkerInUse = this.refs.ModalUsingSpace.getCurrentMarkerInUse()
 					if (currentMarkerInUse) {
 						var markerID = this.state.markers.filter(marker => marker.id == currentMarkerInUse)
@@ -136,9 +142,6 @@ export default class Map extends Component {
 						distance > 400 ? (updateMarkerProperties(markerID[0].id, false),
 							this.refs.ModalUsingSpace.setCurrentMarkerInUse(null)) : null
 					}
-				} catch (error) {
-					// hot reloading error
-					// console.log(error)
 				}
 			},
 			// error => console.log(error)
@@ -228,6 +231,7 @@ export default class Map extends Component {
 		return (
 			<View style={{ flex: 1 }}>
 				<MapView
+					key={1} // prevent state triggering
 					style={{ flex: 1 }}
 					mapRef={ref => this.mapView = ref}
 					initialRegion={{
