@@ -9,6 +9,7 @@ import {
     Alert,
     KeyboardAvoidingView,
     ActivityIndicator,
+    Animated
 } from 'react-native'
 import AuthInput from '../components/authInput'
 import backgroundImage from '../../assets/imgs/backgroundImage.jpg'
@@ -25,16 +26,24 @@ export default class Logon extends Component {
             email: '',
             password: '',
             confirmPassword: '',
-            loading: false
+            loading: false,
+            successMessage: '',
+            animationMessage: new Animated.Value(0),
         }
     }
 
     signup = async () => {
         this.setState({ loading: true })
         await signup(this.state.email, this.state.password)
-            .then(msg => this.setState({ successMessage: msg, errorMessage: "" }))
-            .catch(msg => Alert.alert('Erro', 'Este email já está sendo usado!'))
-        this.setState({ loading: false, stageNew: false })
+            .then((msg) => {
+                this.setState({ successMessage: msg, password: '', confirmPassword: '' })
+                this.animateMessage()
+                this.setState({ loading: false, stageNew: false })
+            })
+            .catch(msg => {
+                Alert.alert('Erro', 'Este email já está sendo usado!')
+                this.setState({ loading: false, password: '', confirmPassword: '' })
+            })
     }
 
     signin = async () => {
@@ -53,6 +62,20 @@ export default class Logon extends Component {
         this.state.stageNew ? this.signup() : this.signin()
     }
 
+    animateMessage = () => {
+        Animated.timing(this.state.animationMessage, {
+            toValue: 1,
+            duration: 600
+        }).start(() => {
+            setTimeout(() => {
+                Animated.timing(this.state.animationMessage, {
+                    toValue: 0,
+                    timing: 1200
+                }).start();
+            }, 2500);
+        })
+    }
+
     render() {
         const validations = []
 
@@ -69,23 +92,16 @@ export default class Logon extends Component {
                 style={styles.background}>
                 <Image style={styles.parkAbleIcon} source={ParkAbleIcon} />
 
-                {this.state.loading ? <ActivityIndicator style={styles.activityIndicator} size="large" color="#2c3e50" /> : null}
+                {this.state.loading ?
+                    <ActivityIndicator style={styles.activityIndicator} size="large" color="#2c3e50" /> : null}
+
+                {this.state.successMessage ?
+                    <Animated.View style={[styles.successMessage, { opacity: this.state.animationMessage }]} >
+                        <Text style={styles.successMessageText}>{this.state.successMessage}</Text>
+                    </Animated.View>
+                    : null}
 
                 <KeyboardAvoidingView behavior="padding">
-
-                    <TouchableOpacity
-                        style={[styles.buttonTop, {
-                            padding: this.state.stageNew ? 10 : 9,
-                            marginRight: this.state.stageNew ? 18 : 5,
-                            marginBottom: this.state.stageNew ? -3 : 0,
-                        }]}
-                        onPress={() => this.setState({
-                            stageNew: !this.state.stageNew
-                        })}>
-                        <Text style={styles.buttonTextTop}>
-                            {this.state.stageNew ? 'Login'
-                                : 'Cadastrar'}</Text>
-                    </TouchableOpacity>
 
                     <View style={styles.container}>
                         <AuthInput icon='at' placeholder='E-mail'
@@ -106,13 +122,32 @@ export default class Logon extends Component {
                                 value={this.state.confirmPassword}
                                 onChangeText={confirmPassword =>
                                     this.setState({ confirmPassword })} />}
-                        <TouchableOpacity disabled={!validForm}
-                            onPress={this.signinOrSignup}>
-                            <View style={[styles.button, !validForm ? { backgroundColor: '#AAA' } : {}]}>
-                                <Text style={styles.buttonText}>
-                                    {this.state.stageNew ? 'Registrar' : 'Entrar'}</Text>
+
+                        <View style={{ display: 'flex', flexDirection: 'row' }}>
+                            <View style={{ width: '50%' }}>
+                                <TouchableOpacity
+                                    disabled={this.state.loading}
+                                    style={[styles.cadastrarOrLogin,
+                                    this.state.loading ? { backgroundColor: '#AAA' } : {}
+                                    ]}
+                                    onPress={() => this.setState({
+                                        stageNew: !this.state.stageNew
+                                    })}>
+                                    <Text style={styles.cadastrarOrLoginText}>
+                                        {this.state.stageNew ? 'Login'
+                                            : 'Cadastrar'}</Text>
+                                </TouchableOpacity>
                             </View>
-                        </TouchableOpacity>
+                            <View style={{ width: '50%' }}>
+                                <TouchableOpacity disabled={!validForm || this.state.loading}
+                                    onPress={this.signinOrSignup}>
+                                    <View style={[styles.button, !validForm || this.state.loading ? { backgroundColor: '#AAA' } : {}]}>
+                                        <Text style={styles.buttonText}>
+                                            {this.state.stageNew ? 'Registrar' : 'Entrar'}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
                 </KeyboardAvoidingView>
             </ImageBackground >
@@ -144,39 +179,60 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 50
     },
+    successMessage: {
+        backgroundColor: 'white',
+        marginBottom: 10,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: 'white',
+        padding: 4,
+        position: 'absolute',
+        top: 55,
+    },
+    successMessageText: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        color: '#2c3e50'
+    },
     container: {
         marginTop: 5,
-        marginBottom: 20
-    },
-    formContainer: {
-        padding: 25,
-        width: '90%',
+        marginBottom: 20,
+        alignItems: 'center',
+        paddingLeft: 10,
+        paddingRight: 10
     },
     input: {
         marginTop: 10,
         backgroundColor: '#FFF',
     },
+    cadastrarOrLogin: {
+        backgroundColor: '#303952',
+        borderRadius: 10,
+        marginTop: 12,
+        alignSelf: "flex-start",
+        padding: 10,
+        marginLeft: 20,
+        width: '60%'
+    },
+    cadastrarOrLoginText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 20,
+        textAlign: 'center',
+    },
     button: {
         backgroundColor: '#080',
         marginTop: 10,
+        marginRight: 20,
         padding: 10,
-        alignItems: 'center',
-        borderRadius: 10
+        alignSelf: "flex-end",
+        borderRadius: 10,
+        width: '60%',
     },
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 20,
+        textAlign: 'center',
     },
-    buttonTop: {
-        borderRadius: 10,
-        backgroundColor: '#303952',
-        width: '50%',
-        alignSelf: "flex-end"
-    },
-    buttonTextTop: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16
-    }
 })

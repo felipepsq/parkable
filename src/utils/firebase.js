@@ -58,7 +58,7 @@ export const signup = (email, password) => {
             .auth()
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
-                resolve("Usuário criado com sucesso!")
+                resolve("Usuário cadastrado com sucesso!")
             })
             .catch(error => {
                 reject(error)
