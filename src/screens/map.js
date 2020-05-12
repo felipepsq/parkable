@@ -44,10 +44,6 @@ export default class Map extends Component {
 		this.markersInUse = []
 	}
 
-	componentWillUnmount() {
-		this.mapView.key = 0
-	}
-
 	getHeading = async () => {
 		await Location.watchHeadingAsync(e => {
 			if (!this.state.heading) {
@@ -154,7 +150,7 @@ export default class Map extends Component {
 			Alert.alert('Erro', 'Por favor, habilite o serviço de localização!')
 		}
 		else if (mapsDirections) {
-			this.mapView.animateCamera({
+			this.mapView && this.mapView.animateCamera({
 				center: this.state.location,
 				altitude: 600
 			})
@@ -231,7 +227,6 @@ export default class Map extends Component {
 		return (
 			<View style={{ flex: 1 }}>
 				<MapView
-					key={1} // prevent state triggering
 					style={{ flex: 1 }}
 					mapRef={ref => this.mapView = ref}
 					initialRegion={{
