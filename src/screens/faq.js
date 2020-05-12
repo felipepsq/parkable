@@ -5,10 +5,13 @@ import {
     TouchableOpacity,
     Text,
     ScrollView,
+    Image,
     AsyncStorage
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import Icon2 from 'react-native-vector-icons/MaterialIcons'
+import GPS from '../../assets/imgs/gps.png'
+import addSpace from '../../assets/imgs/addSpace.png'
+import traceRoute from '../../assets/imgs/traceRoute.png'
 export default class Faq extends Component {
 
     constructor(props) {
@@ -52,31 +55,35 @@ export default class Faq extends Component {
                         </Text>
 
                         <Text style={styles.subtitle}>Como ir até a minha localização no mapa?</Text>
-                        <Text style={styles.simpleText}>
-                            <Icon2 name='my-location' color={'white'} size={20} style={{ marginLeft: 5 }} />
-                        : No canto direito inferior, há este botão responsável por aproximar a câmera para onde
+                        <Text style={styles.simpleText}>No canto direito inferior, há um botão responsável por aproximar a câmera para onde
                         sua localização se encontra no mapa.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '90%', height: 80 }]}
+                            resizeMode='center' source={GPS} />
 
                         <Text style={styles.subtitle}>Como cadastrar uma nova vaga no mapa?</Text>
-                        <Text style={styles.simpleText}>Ao carregar o mapa, você precisa ir até o ponto onde deseja
+                        <Text style={styles.simpleText}>Ao carregar o mapa, você precisa navegar até o ponto onde deseja
                         cadastrar uma nova vaga, e pressionar de forma contínua (toque longo) até um pop-up aparecer
                         com as opções de seleção de vaga para deficiente ou idoso, e o ponto de referência para ter como
                         base de localização, após é necessário confirmar estas informações, clicando no botão 'Confirmar'.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '70%', height: 200 }]}
+                            resizeMode='center' source={addSpace} />
 
                         <Text style={styles.subtitle}>Como traçar a rota para uma vaga específia?</Text>
                         <Text style={styles.simpleText}>É necessário procurar por uma vaga já cadastrada no mapa,
-                        e após clicar sobre esta, que irá abrir uma caixa de itens contendo a opção 'Traçar rota',
+                        e após clicar sobre esta, abrirá uma caixa de itens contendo a opção 'Traçar rota',
                         onde clicada, irá traçar uma linha preta pela menor rota processada pelo aplicativo baseada na
                         sua localização atual.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '70%', height: 160 }]}
+                            resizeMode='center' source={traceRoute} />
 
                         <Text style={styles.subtitle}>Como informar que uma vaga é inexistente?</Text>
                         <Text style={styles.simpleText}>Caso queira informar que uma das vagas cadastradas é inexistente,
-                        basta você clicar sobre a vaga em questão, e a seguir pressionar na opção 'Reportar vaga', localizada
-                        na caixa de itens que apareceu sobre o mapa. A exclusão desta vaga é dada após a mesma ter
-                        sido reportada por dois usuários diferentes.
+                        basta você clicar sobre a vaga em questão, e a seguir pressionar na opção 'Reportar vaga' (imagem no item
+                        acima), localizada na caixa de itens que apareceu sobre o mapa. A exclusão desta vaga é dada após a mesma
+                        ter sido reportada por dois usuários diferentes.
                         </Text>
 
                         <Text style={styles.subtitle}>Como marcar que estou utilizando uma vaga?</Text>
@@ -176,12 +183,13 @@ const styles = StyleSheet.create({
         fontSize: 30,
         textAlign: 'center',
         fontFamily: 'Ubuntu_bold',
-        marginBottom: 30
+        marginBottom: 10
     },
     subtitle: {
         color: '#FFF',
         fontSize: 18,
         fontFamily: 'Ubuntu',
+        marginTop: 10,
         marginBottom: 5
     },
     simpleText: {
@@ -190,7 +198,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Ubuntu',
         paddingLeft: 20,
         textAlign: 'justify',
-        marginBottom: 15
+        marginBottom: 5
     },
     mapContainer: {
         alignItems: 'center',
@@ -210,4 +218,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'white'
     },
+    textPhoto: {
+        alignSelf: 'center',
+        marginLeft: 20,
+    }
 })
