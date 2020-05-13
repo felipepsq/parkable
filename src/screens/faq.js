@@ -9,11 +9,16 @@ import {
     AsyncStorage
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import GPS from '../../assets/imgs/faq/gps.png'
+import gps from '../../assets/imgs/faq/gps.png'
 import addSpace from '../../assets/imgs/faq/addSpace.png'
 import traceRoute from '../../assets/imgs/faq/traceRoute.png'
 import usingSpace from '../../assets/imgs/faq/usingSpace.png'
 import reportSpace from '../../assets/imgs/faq/reportSpace.png'
+import exitSpace from '../../assets/imgs/faq/exitSpace.png'
+import gpsPrecision from '../../assets/imgs/faq/gpsPrecision.png'
+import leftMenu from '../../assets/imgs/faq/leftMenu.png'
+import logout from '../../assets/imgs/faq/logout.png'
+import stopRoute from '../../assets/imgs/faq/stopRoute.png'
 export default class Faq extends Component {
 
     constructor(props) {
@@ -61,7 +66,7 @@ export default class Faq extends Component {
                         sua localização se encontra no mapa.
                         </Text>
                         <Image style={[styles.textPhoto, { width: '90%', height: 80 }]}
-                            resizeMode='center' source={GPS} />
+                            resizeMode='center' source={gps} />
 
                         <Text style={styles.subtitle}>Como cadastrar uma nova vaga no mapa?</Text>
                         <Text style={styles.simpleText}>Ao carregar o mapa, você precisa navegar até o ponto onde deseja
@@ -107,36 +112,46 @@ export default class Faq extends Component {
                         pop-up na parte inferior da sua tela solicitando sua liberação, que ocorre a partir da confirmação pela
                         opção "Sim".
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '55%', height: 170 }]}
+                            resizeMode='center' source={exitSpace} />
 
                         <Text style={styles.subtitle}>Por que está aparecendo a mensagem "GPS sem precisão!"?</Text>
                         <Text style={styles.simpleText}>Isto ocorre devido a baixa precisão do GPS diante sua atual
                         localização. Para melhorá-la, você precisa estar ao ar livre com o seu dispositivo, como na calçada
                         ou dentro do carro localizado na rua.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '90%', height: 80 }]}
+                            resizeMode='center' source={gpsPrecision} />
 
                         <Text style={styles.subtitle}>Como acessar o menu lateral?</Text>
                         <Text style={styles.simpleText}>Para isso, você precisa clicar no ícone contido no canto superior esquerdo
-                        em forma de três barras, logo, uma aba lateral irá abrir para acessar as telas como: "Mapa", "FAQ" e
-                        "Configurações". Caso você esteja em uma tela diferente de "Mapa", basta arrastar o dedo na direção
-                        esquerda para direita, e o menu irá se abrir.
+                        no formato de três barras (imagem no item de cima), logo, uma aba lateral irá abrir para acessar as telas
+                        como: "Mapa", "FAQ" e "Configurações". Caso você esteja em uma tela diferente de "Mapa", basta arrastar o
+                        dedo na direção esquerda para direita, e o menu irá se abrir.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '70%', height: 170 }]}
+                            resizeMode='center' source={leftMenu} />
 
                         <Text style={styles.subtitle}>Como sair/trocar de usuário?</Text>
                         <Text style={styles.simpleText}>Após você entrar no aplicativo com um usuário já cadastrado, é necessário
-                        navegar até o menu lateral e clicar no item "Configurações", lá está contida a opção "Sair!", responsável
+                        navegar até o menu lateral e clicar no item "Configurações", lá está contida a opção "Sair", responsável
                         por desconectar a sua conta atual da aplicação.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '70%', height: 170 }]}
+                            resizeMode='center' source={logout} />
 
                         <Text style={styles.subtitle}>Informações úteis:</Text>
 
                         <Text style={styles.simpleText}>- Após você traçar a rota com base na vaga desejada, o aplicativo
-                        irá desenhar uma linha verde no mapa indicando o trajeto já percorrido por você, conforme mudanças na
-                        sua localização.
+                        irá desenhar uma linha verde no mapa indicando o trajeto já percorrido por você, conforme mudanças
+                        ocorridas na sua localização.
                         </Text>
 
                         <Text style={styles.simpleText}>- Diante de uma rota traçada no mapa, você poderá cancelá-la
                         atráves de um botão contido no canto inferior esquerdo em forma de "X" na cor vermelha.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '90%', height: 80, marginTop: 5, marginBottom: 10 }]}
+                            resizeMode='center' source={stopRoute} />
 
                         <Text style={styles.simpleText}>- Após você marcar uma vaga como "Em uso", o sistema observará sua
                         localização, e caso ela estiver a mais de 400 metros distante da vaga reservada, a mesma será
@@ -213,12 +228,13 @@ const styles = StyleSheet.create({
         marginBottom: 40
     },
     mapButton: {
-        backgroundColor: '#0984e3',
+        backgroundColor: '#27ae60',
         width: '40%',
         height: 50,
+        marginTop: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 25
+        borderRadius: 12
     },
     mapButtonText: {
         fontFamily: 'Ubuntu',

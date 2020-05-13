@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
 	},
 	iconStopRoute: {
 		position: 'absolute',
-		bottom: 66,
+		bottom: 65,
 		left: 10,
 		alignSelf: 'flex-start',
 		backgroundColor: '#c23616',
