@@ -84,12 +84,11 @@ export default class Map extends Component {
 					longitude: position.coords.longitude,
 					latitudeDelta: 0.005,
 					longitudeDelta: 0.005
-				};
-				this.setState({ location });
-				resolve()
+				}
+				this.mapView ? (this.setState({ location }), resolve()) : null
 			}
 		})
-	};
+	}
 
 	watchLocationAsync = async () => {
 		await Location.watchPositionAsync(
@@ -100,7 +99,9 @@ export default class Map extends Component {
 			},
 			newLocation => {
 				let { coords } = newLocation;
-				coords.accuracy > 12 ? this.setState({ lowAccuracy: true }) : this.setState({ lowAccuracy: false })
+				if (this.mapView) {
+					coords.accuracy > 12 ? this.setState({ lowAccuracy: true }) : this.setState({ lowAccuracy: false })
+				}
 				let location = {
 					latitude: coords.latitude,
 					longitude: coords.longitude,
@@ -159,7 +160,7 @@ export default class Map extends Component {
 			this.getLocationAsync()
 				.then(() => {
 					if (!this.state.heading) {
-						this.mapView.animateCamera({
+						this.mapView && this.mapView.animateCamera({
 							center: this.state.location,
 							altitude: init ? 8000 : 600
 						})
@@ -167,7 +168,7 @@ export default class Map extends Component {
 						this.watchLocationAsync()
 					}
 					else {
-						this.mapView.animateCamera({
+						this.mapView && this.mapView.animateCamera({
 							center: this.state.location,
 							heading: this.state.heading,
 							altitude: init ? 8000 : 600
@@ -178,7 +179,7 @@ export default class Map extends Component {
 	}
 
 	setMarkers = (markers) => {
-		this.setState({ markers: markers.markers, loadingMarkers: markers.loadingMarkers })
+		this.mapView && this.setState({ markers: markers.markers, loadingMarkers: markers.loadingMarkers })
 	}
 
 	createInitMarkers = async () => {
