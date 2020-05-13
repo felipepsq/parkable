@@ -13,7 +13,7 @@ const firebaseConfig = {
     measurementId: "G-PBC777DPMQ"
 };
 
-firebase.initializeApp(firebaseConfig);
+firebase.apps.length == 0 ? firebase.initializeApp(firebaseConfig) : null
 
 var currentUser = null
 
