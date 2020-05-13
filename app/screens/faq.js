@@ -129,7 +129,7 @@ export default class Faq extends Component {
                         como: "Mapa", "FAQ" e "Configurações". Caso você esteja em uma tela diferente de "Mapa", basta arrastar o
                         dedo na direção esquerda para direita, e o menu irá se abrir.
                         </Text>
-                        <Image style={[styles.textPhoto, { width: '70%', height: 170 }]}
+                        <Image style={[styles.textPhoto, { width: '70%', height: 200 }]}
                             resizeMode='center' source={leftMenu} />
 
                         <Text style={styles.subtitle}>Como sair/trocar de usuário?</Text>

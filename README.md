@@ -20,7 +20,7 @@ Para poder desenvolver, testar ou modificar este projeto, você precisa seguir a
 
 ## Usabilidade
 
-Todas as informações necessárias para usar o aplicativo estão contidas em uma página dentro do próprio app, na seção FAQ, acessível após o processo de autenticação, onde é exemplificado todas as funcionalidades contidas e perguntas frequentes. Também é possível acessá-las diretamente no arquivo "faq.js", disponível no diretório "/src/screens/faq.js".
+Todas as informações necessárias para usar o aplicativo estão contidas em uma página dentro do próprio app, na seção FAQ, acessível após o processo de autenticação, onde é exemplificado todas as funcionalidades contidas e perguntas frequentes. Também é possível acessá-las diretamente no arquivo "faq.js", disponível no diretório "/app/screens/faq.js".
 
 ## Avisos importantes
 
