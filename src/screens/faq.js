@@ -9,9 +9,11 @@ import {
     AsyncStorage
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import GPS from '../../assets/imgs/gps.png'
-import addSpace from '../../assets/imgs/addSpace.png'
-import traceRoute from '../../assets/imgs/traceRoute.png'
+import GPS from '../../assets/imgs/faq/gps.png'
+import addSpace from '../../assets/imgs/faq/addSpace.png'
+import traceRoute from '../../assets/imgs/faq/traceRoute.png'
+import usingSpace from '../../assets/imgs/faq/usingSpace.png'
+import reportSpace from '../../assets/imgs/faq/reportSpace.png'
 export default class Faq extends Component {
 
     constructor(props) {
@@ -76,23 +78,28 @@ export default class Faq extends Component {
                         onde clicada, irá traçar uma linha preta pela menor rota processada pelo aplicativo baseada na
                         sua localização atual.
                         </Text>
-                        <Image style={[styles.textPhoto, { width: '70%', height: 160 }]}
+                        <Image style={[styles.textPhoto, { width: '55%', height: 170 }]}
                             resizeMode='center' source={traceRoute} />
 
                         <Text style={styles.subtitle}>Como informar que uma vaga é inexistente?</Text>
                         <Text style={styles.simpleText}>Caso queira informar que uma das vagas cadastradas é inexistente,
                         basta você clicar sobre a vaga em questão, e a seguir pressionar na opção 'Reportar vaga' (imagem no item
                         acima), localizada na caixa de itens que apareceu sobre o mapa. A exclusão desta vaga é dada após a mesma
-                        ter sido reportada por dois usuários diferentes.
+                        ser confirmada pelo toque no botão "Sim" do pop-up aberto na parte inferior da tela, e depois de ter
+                        sido reportada por dois usuários diferentes.
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '90%', height: 130 }]}
+                            resizeMode='center' source={reportSpace} />
 
                         <Text style={styles.subtitle}>Como marcar que estou utilizando uma vaga?</Text>
                         <Text style={styles.simpleText}>A partir do momento em que uma rota é traçada no mapa, o aplicativo
                         irá observar por mudanças na localização, assim, quando você estiver em um raio de 25 metros distante da
                         vaga, irá aparecer um pop-up na parte inferior da sua tela solicitando se você irá utilizar esta vaga
                         ou não. Para marcar ela como em uso, você precisará clicar na opção "Sim" contida no pop-up, caso contrário,
-                        basta pressionar a opção "Não".
+                        na opção "Não".
                         </Text>
+                        <Image style={[styles.textPhoto, { width: '90%', height: 130 }]}
+                            resizeMode='center' source={usingSpace} />
 
                         <Text style={styles.subtitle}>Como liberar uma vaga que estou usando?</Text>
                         <Text style={styles.simpleText}>Após você marcar uma vaga como "Em uso", é necessário você pressionar
@@ -221,5 +228,6 @@ const styles = StyleSheet.create({
     textPhoto: {
         alignSelf: 'center',
         marginLeft: 20,
+        borderRadius: 15
     }
 })
