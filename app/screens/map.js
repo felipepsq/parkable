@@ -88,8 +88,7 @@ export default class Map extends Component {
 	watchLocationAsync = async () => {
 		await Location.watchPositionAsync(
 			{
-				accuracy: 6,
-				distanceInterval: 5
+				accuracy: 6
 			},
 			newLocation => {
 				let { coords } = newLocation
