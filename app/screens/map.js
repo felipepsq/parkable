@@ -39,63 +39,56 @@ export default class Map extends Component {
 			calcDistance: false,
 			routeCoordinates: [],
 			lowAccuracy: false,
+			iconGpsDisabled: false
 		}
 		this.markers = []
 		this.markersInUse = []
+		this.currentHeading = null
 	}
 
-	getHeading = async () => {
-		await Location.watchHeadingAsync(e => {
+	getHeading = async (callBack) => {
+		this.currentHeading = await Location.watchHeadingAsync(e => {
 			if (!this.state.heading) {
 				this.setState({ heading: e.magHeading })
 			}
 			else {
-				if (e.magHeading > (this.state.heading + 50) || e.magHeading < (this.state.heading - 50)) {
+				if (e.magHeading > (this.state.heading + 30) || e.magHeading < (this.state.heading - 30)) {
 					this.setState({ heading: e.magHeading })
 
-					// Location.watchHeadingAsync() stops watching
-					this.state.directionsTrace && this.mapView ?
+					this.mapView && this.state.directionsTrace && !this.state.iconGpsDisabled ?
 						(this.mapView.animateCamera({
 							center: this.state.location,
 							heading: this.state.heading
-						}),
-							Location.watchHeadingAsync(),
-							setTimeout(() => {
-								this.getHeading()
-							}, 3000))
-						: null
+						})) : null
 				}
 			}
+			this.currentHeading.remove()
+			if (this.state.directionsTrace != false) {
+				setTimeout(() => {
+					this.getHeading(() => { })
+				}, 3000)
+			}
+			callBack()
 		})
 	}
 
-	getLocationAsync = async () => {
-		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+	getLocationAsync = async (callBack) => {
 		let position = await Location.getCurrentPositionAsync({});
-		return new Promise((resolve, reject) => {
-			if (status !== 'granted') {
-				Alert.alert('Erro', 'Por favor, habilite o serviço de localização!')
-				reject()
-			}
-			else {
-
-				let location = {
-					latitude: position.coords.latitude,
-					longitude: position.coords.longitude,
-					latitudeDelta: 0.005,
-					longitudeDelta: 0.005
-				}
-				this.mapView ? (this.setState({ location }), resolve()) : null
-			}
-		})
+		let location = {
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude,
+			latitudeDelta: 0.005,
+			longitudeDelta: 0.005
+		}
+		this.setState({ location })
+		callBack()
 	}
 
 	watchLocationAsync = async () => {
 		await Location.watchPositionAsync(
 			{
-				enableHighAccuracy: true,
-				distanceInterval: 0,
-				timeInterval: 2000
+				accuracy: 6,
+				distanceInterval: 5
 			},
 			newLocation => {
 				let { coords } = newLocation;
@@ -113,18 +106,23 @@ export default class Map extends Component {
 					this.setState({
 						routeCoordinates: this.state.routeCoordinates.concat([newCoordinate]),
 					});
-					let distance = getDistance(location, this.state.currentMarkerCoord)
-					// if (distance <= 25 && this.refs.ModalUsingSpace) {
-					if (this.refs.ModalUsingSpace) {
+					let stateDistance = getDistance(location, this.state.location)
+					if (stateDistance > 30 && this.mapView) {
+						this.setState({ location: coords })
+					}
+					console.log(stateDistance)
+					let distanceToSpace = getDistance(location, this.state.currentMarkerCoord)
+					if (distanceToSpace <= 25 && this.refs.ModalUsingSpace) {
+						// if (this.refs.ModalUsingSpace) {
 						setTimeout(() => {
 							this.setCalcDistance(false)
+							this.directionsTrace(false)
 							this.refs.ModalUsingSpace.setModalUsingSpace({
 								active: true,
 								sameUserUID: null
 							}, this.state.currentMarkerID)
 						}, 1);
 					}
-					// }
 				}
 				else {
 					this.state.routeCoordinates.length != 0 ? this.setState({ routeCoordinates: [] }) : null
@@ -142,7 +140,7 @@ export default class Map extends Component {
 				}
 			},
 			// error => console.log(error)
-		);
+		)
 	}
 
 	goToCurrentLocation = async (init, mapsDirections) => {
@@ -151,30 +149,40 @@ export default class Map extends Component {
 			Alert.alert('Erro', 'Por favor, habilite o serviço de localização!')
 		}
 		else if (mapsDirections) {
-			this.mapView && this.mapView.animateCamera({
-				center: this.state.location,
-				altitude: 600
+			this.getHeading(() => {
+				this.mapView && this.mapView.animateCamera({
+					center: this.state.location,
+					altitude: 600
+				})
 			})
 		}
 		else {
-			this.getLocationAsync()
-				.then(() => {
-					if (!this.state.heading) {
+			if (init) {
+				this.getLocationAsync(() => {
+					this.getHeading(() => {
 						this.mapView && this.mapView.animateCamera({
 							center: this.state.location,
-							altitude: init ? 8000 : 600
+							altitude: 8000
 						})
-						this.getHeading()
 						this.watchLocationAsync()
-					}
-					else {
+					})
+				})
+			}
+			else {
+				this.state.directionsTrace ?
+					this.mapView && this.mapView.animateCamera({
+						center: this.state.location,
+						heading: this.state.heading,
+						altitude: 600
+					}) :
+					this.getHeading(() => {
 						this.mapView && this.mapView.animateCamera({
 							center: this.state.location,
 							heading: this.state.heading,
-							altitude: init ? 8000 : 600
+							altitude: 600
 						})
-					}
-				})
+					})
+			}
 		}
 	}
 
@@ -385,7 +393,15 @@ export default class Map extends Component {
 				</View>
 
 				<View style={styles.iconGps}>
-					<TouchableOpacity onPress={() => this.goToCurrentLocation(false, false)}>
+					<TouchableOpacity disabled={this.state.iconGpsDisabled} onPress={() => {
+						this.setState({ iconGpsDisabled: true }, () => {
+							setTimeout(() => {
+								this.setState({ iconGpsDisabled: false })
+							}, 2000);
+						})
+						this.goToCurrentLocation(false, false)
+
+					}}>
 						<Icon2 name='my-location' color={'white'} size={32} />
 					</TouchableOpacity>
 				</View>
