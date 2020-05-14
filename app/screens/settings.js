@@ -21,8 +21,8 @@ export default class Settings extends Component {
         await Expo.Font.loadAsync({
             'Ubuntu': require('../../assets/fonts/Ubuntu.ttf'),
             'Ubuntu_bold': require('../../assets/fonts/Ubuntu_bold.ttf'),
-        });
-        this.setState({ fontLoaded: true });
+        })
+        this.setState({ fontLoaded: true })
     }
 
 

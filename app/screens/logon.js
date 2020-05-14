@@ -21,6 +21,7 @@ export default class Logon extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            fontLoaded: false,
             stageNew: false,
             name: '',
             email: '',
@@ -30,6 +31,14 @@ export default class Logon extends Component {
             successMessage: '',
             animationMessage: new Animated.Value(0),
         }
+    }
+
+    async UNSAFE_componentWillMount() {
+        await Expo.Font.loadAsync({
+            'Ubuntu': require('../../assets/fonts/Ubuntu.ttf'),
+            'Ubuntu_bold': require('../../assets/fonts/Ubuntu_bold.ttf'),
+        })
+        this.setState({ fontLoaded: true })
     }
 
     signup = async () => {
@@ -102,53 +111,57 @@ export default class Logon extends Component {
                     : null}
 
                 <KeyboardAvoidingView behavior="padding">
-
-                    <View style={styles.container}>
-                        <AuthInput icon='at' placeholder='E-mail'
-                            style={styles.input}
-                            value={this.state.email}
-                            onChangeText={email =>
-                                this.setState({ email })} />
-                        <AuthInput icon='lock' secureTextEntry={true}
-                            placeholder='Senha'
-                            style={styles.input}
-                            value={this.state.password}
-                            onChangeText={password =>
-                                this.setState({ password })} />
-                        {this.state.stageNew &&
-                            <AuthInput icon='asterisk'
-                                secureTextEntry={true} placeholder='Confirmação'
+                    {this.state.fontLoaded ?
+                        <View style={styles.container}>
+                            <AuthInput icon='at' placeholder='E-mail'
                                 style={styles.input}
-                                value={this.state.confirmPassword}
-                                onChangeText={confirmPassword =>
-                                    this.setState({ confirmPassword })} />}
+                                value={this.state.email}
+                                onChangeText={email =>
+                                    this.setState({ email })} />
+                            <AuthInput icon='lock' secureTextEntry={true}
+                                placeholder='Senha'
+                                style={styles.input}
+                                value={this.state.password}
+                                onChangeText={password =>
+                                    this.setState({ password })} />
+                            {this.state.stageNew &&
+                                <AuthInput icon='asterisk'
+                                    secureTextEntry={true} placeholder='Confirmação'
+                                    style={styles.input}
+                                    value={this.state.confirmPassword}
+                                    onChangeText={confirmPassword =>
+                                        this.setState({ confirmPassword })} />}
 
-                        <View style={{ display: 'flex', flexDirection: 'row' }}>
-                            <View style={{ width: '50%' }}>
-                                <TouchableOpacity
-                                    disabled={this.state.loading}
-                                    style={[styles.cadastrarOrLogin,
-                                    this.state.loading ? { backgroundColor: '#AAA' } : {}
-                                    ]}
-                                    onPress={() => this.setState({
-                                        stageNew: !this.state.stageNew
-                                    })}>
-                                    <Text style={styles.cadastrarOrLoginText}>
-                                        {this.state.stageNew ? 'Login'
-                                            : 'Cadastrar'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ width: '50%' }}>
-                                <TouchableOpacity disabled={!validForm || this.state.loading}
-                                    onPress={this.signinOrSignup}>
-                                    <View style={[styles.button, !validForm || this.state.loading ? { backgroundColor: '#AAA' } : {}]}>
-                                        <Text style={styles.buttonText}>
-                                            {this.state.stageNew ? 'Registrar' : 'Entrar'}</Text>
-                                    </View>
-                                </TouchableOpacity>
+                            <View style={{ display: 'flex', flexDirection: 'row' }}>
+                                <View style={{ width: '50%' }}>
+                                    <TouchableOpacity
+                                        disabled={this.state.loading}
+                                        style={[styles.cadastrarOrLogin,
+                                        this.state.loading ? { backgroundColor: '#AAA' } : {}
+                                        ]}
+                                        onPress={() => this.setState({
+                                            stageNew: !this.state.stageNew
+                                        })}>
+                                        <Text style={styles.cadastrarOrLoginText}>
+                                            {this.state.stageNew ? 'Login'
+                                                : 'Cadastrar'}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ width: '50%' }}>
+                                    <TouchableOpacity disabled={!validForm || this.state.loading}
+                                        onPress={this.signinOrSignup}>
+                                        <View style={[styles.button, !validForm || this.state.loading ? { backgroundColor: '#AAA' } : {}]}>
+                                            <Text style={styles.buttonText}>
+                                                {this.state.stageNew ? 'Registrar' : 'Entrar'}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
-                    </View>
+                        :
+                        null
+                    }
+
                 </KeyboardAvoidingView>
             </ImageBackground >
         )
@@ -190,9 +203,9 @@ const styles = StyleSheet.create({
         top: 55,
     },
     successMessageText: {
-        fontWeight: 'bold',
         fontSize: 18,
-        color: '#2c3e50'
+        color: '#2c3e50',
+        fontFamily: 'Ubuntu_bold'
     },
     container: {
         marginTop: 5,
@@ -219,6 +232,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         textAlign: 'center',
+        fontFamily: 'Ubuntu_bold'
     },
     button: {
         backgroundColor: '#080',
@@ -234,5 +248,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         textAlign: 'center',
+        fontFamily: 'Ubuntu_bold'
     },
 })
