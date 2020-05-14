@@ -48,11 +48,12 @@ export default class Map extends Component {
 
 	getHeading = async (callBack) => {
 		this.currentHeading = await Location.watchHeadingAsync(e => {
+			console.log(e.magHeading)
 			if (!this.state.heading) {
 				this.setState({ heading: e.magHeading })
 			}
 			else {
-				if (e.magHeading > (this.state.heading + 30) || e.magHeading < (this.state.heading - 30)) {
+				if (e.magHeading > (this.state.heading + 50) || e.magHeading < (this.state.heading - 50)) {
 					this.setState({ heading: e.magHeading })
 
 					this.mapView && this.state.directionsTrace && !this.state.iconGpsDisabled ?
@@ -73,7 +74,7 @@ export default class Map extends Component {
 	}
 
 	getLocationAsync = async (callBack) => {
-		let position = await Location.getCurrentPositionAsync({});
+		let position = await Location.getCurrentPositionAsync({})
 		let location = {
 			latitude: position.coords.latitude,
 			longitude: position.coords.longitude,
@@ -91,7 +92,7 @@ export default class Map extends Component {
 				distanceInterval: 5
 			},
 			newLocation => {
-				let { coords } = newLocation;
+				let { coords } = newLocation
 				if (this.mapView) {
 					coords.accuracy > 12 ? this.setState({ lowAccuracy: true }) : this.setState({ lowAccuracy: false })
 				}
@@ -100,17 +101,16 @@ export default class Map extends Component {
 					longitude: coords.longitude,
 					latitudeDelta: 0.005,
 					longitudeDelta: 0.005
-				};
+				}
 				if (this.state.directionsTrace && this.state.calcDistance) {
 					let newCoordinate = { latitude: coords.latitude, longitude: coords.longitude }
 					this.setState({
 						routeCoordinates: this.state.routeCoordinates.concat([newCoordinate]),
-					});
+					})
 					let stateDistance = getDistance(location, this.state.location)
-					if (stateDistance > 30 && this.mapView) {
-						this.setState({ location: coords })
-					}
-					console.log(stateDistance)
+
+					stateDistance > 30 && this.mapView ? this.setState({ location: coords }) : null
+
 					let distanceToSpace = getDistance(location, this.state.currentMarkerCoord)
 					if (distanceToSpace <= 25 && this.refs.ModalUsingSpace) {
 						// if (this.refs.ModalUsingSpace) {
@@ -121,7 +121,7 @@ export default class Map extends Component {
 								active: true,
 								sameUserUID: null
 							}, this.state.currentMarkerID)
-						}, 1);
+						}, 1)
 					}
 				}
 				else {
@@ -144,7 +144,8 @@ export default class Map extends Component {
 	}
 
 	goToCurrentLocation = async (init, mapsDirections) => {
-		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+		let { status } = await Permissions.askAsync(Permissions.LOCATION)
+		console.log(status)
 		if (status !== 'granted') {
 			Alert.alert('Erro', 'Por favor, habilite o serviço de localização!')
 		}
@@ -176,11 +177,18 @@ export default class Map extends Component {
 						altitude: 600
 					}) :
 					this.getHeading(() => {
-						this.mapView && this.mapView.animateCamera({
-							center: this.state.location,
-							heading: this.state.heading,
-							altitude: 600
+						!this.state.location ? this.getLocationAsync(() => {
+							this.mapView && this.mapView.animateCamera({
+								center: this.state.location,
+								heading: this.state.heading,
+								altitude: 600
+							})
 						})
+							: this.mapView && this.mapView.animateCamera({
+								center: this.state.location,
+								heading: this.state.heading,
+								altitude: 600
+							})
 					})
 			}
 		}
@@ -294,7 +302,7 @@ export default class Map extends Component {
 														longitude: marker.currentMarkerCoord.longitude
 													},
 													currentMarkerID: marker.id
-												});
+												})
 											}}>
 												{!this.state.directions &&
 													<Icon style={styles.traceRoute} name={"car"} size={22} color={'#0984e3'}>
@@ -397,7 +405,7 @@ export default class Map extends Component {
 						this.setState({ iconGpsDisabled: true }, () => {
 							setTimeout(() => {
 								this.setState({ iconGpsDisabled: false })
-							}, 2000);
+							}, 2000)
 						})
 						this.goToCurrentLocation(false, false)
 
@@ -429,7 +437,7 @@ export default class Map extends Component {
 				</View>}
 
 			</View>
-		);
+		)
 	}
 }
 
