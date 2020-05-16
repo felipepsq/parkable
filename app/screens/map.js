@@ -48,7 +48,6 @@ export default class Map extends Component {
 
 	getHeading = async (callBack) => {
 		this.currentHeading = await Location.watchHeadingAsync(e => {
-			console.log(e.magHeading)
 			if (!this.state.heading) {
 				this.setState({ heading: e.magHeading })
 			}
@@ -88,7 +87,8 @@ export default class Map extends Component {
 	watchLocationAsync = async () => {
 		await Location.watchPositionAsync(
 			{
-				accuracy: 6
+				accuracy: 6,
+				distanceInterval: 15
 			},
 			newLocation => {
 				let { coords } = newLocation
@@ -108,10 +108,16 @@ export default class Map extends Component {
 					})
 					let stateDistance = getDistance(location, this.state.location)
 
-					stateDistance > 30 && this.mapView ? this.setState({ location: coords }) : null
+					stateDistance > 30 && this.mapView ? (
+						this.setState({ location: coords }),
+						this.mapView.animateCamera({
+							center: this.state.location,
+							heading: this.state.heading
+						})
+					) : null
 
 					let distanceToSpace = getDistance(location, this.state.currentMarkerCoord)
-					if (distanceToSpace <= 25 && this.refs.ModalUsingSpace) {
+					if (distanceToSpace <= 15 && this.refs.ModalUsingSpace) {
 						// if (this.refs.ModalUsingSpace) {
 						setTimeout(() => {
 							this.setCalcDistance(false)
@@ -144,7 +150,6 @@ export default class Map extends Component {
 
 	goToCurrentLocation = async (init, mapsDirections) => {
 		let { status } = await Permissions.askAsync(Permissions.LOCATION)
-		console.log(status)
 		if (status !== 'granted') {
 			Alert.alert('Erro', 'Por favor, habilite o serviço de localização!')
 		}

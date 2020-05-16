@@ -98,7 +98,7 @@ export default class Faq extends Component {
 
                         <Text style={styles.subtitle}>Como marcar que estou utilizando uma vaga?</Text>
                         <Text style={styles.simpleText}>A partir do momento em que uma rota é traçada no mapa, o aplicativo
-                        irá observar por mudanças na localização, assim, quando você estiver em um raio de 25 metros distante da
+                        irá observar por mudanças na localização, assim, quando você estiver em um raio de 15 metros distante da
                         vaga, irá aparecer um pop-up na parte inferior da sua tela solicitando se você irá utilizar esta vaga
                         ou não. Para marcar ela como em uso, você precisará clicar na opção "Sim" contida no pop-up, caso contrário,
                         na opção "Não".
