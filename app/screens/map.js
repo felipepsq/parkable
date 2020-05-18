@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/MaterialIcons'
 import * as Location from 'expo-location'
 import * as Permissions from 'expo-permissions'
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake'
 import { getInitMarkers, addMarker, getCurrentUser, updateMarkerProperties } from '../utils/firebase'
 var disabledIcon = require('../../assets/imgs/disabled.png')
 var oldIcon = require('../../assets/imgs/old.png')
@@ -46,13 +47,17 @@ export default class Map extends Component {
 		this.currentHeading = null
 	}
 
+	componentWillUnmount() {
+		deactivateKeepAwake()
+	}
+
 	getHeading = async (callBack) => {
 		this.currentHeading = await Location.watchHeadingAsync(e => {
 			if (!this.state.heading) {
 				this.setState({ heading: e.magHeading })
 			}
 			else {
-				if (e.magHeading > (this.state.heading + 50) || e.magHeading < (this.state.heading - 50)) {
+				if (this.mapView && (e.magHeading > (this.state.heading + 50) || e.magHeading < (this.state.heading - 50))) {
 					this.setState({ heading: e.magHeading })
 
 					this.mapView && this.state.directionsTrace && !this.state.iconGpsDisabled ?
@@ -101,7 +106,7 @@ export default class Map extends Component {
 					latitudeDelta: 0.005,
 					longitudeDelta: 0.005
 				}
-				if (this.state.directionsTrace && this.state.calcDistance) {
+				if (this.state.directionsTrace && this.state.calcDistance && this.mapView) {
 					let newCoordinate = { latitude: coords.latitude, longitude: coords.longitude }
 					this.setState({
 						routeCoordinates: this.state.routeCoordinates.concat([newCoordinate]),
@@ -130,7 +135,7 @@ export default class Map extends Component {
 					}
 				}
 				else {
-					this.state.routeCoordinates.length != 0 ? this.setState({ routeCoordinates: [] }) : null
+					this.mapView && this.state.routeCoordinates.length != 0 ? this.setState({ routeCoordinates: [] }) : null
 				}
 
 				if (this.refs.ModalUsingSpace) {
@@ -216,21 +221,20 @@ export default class Map extends Component {
 	}
 
 	addNewMarker = async () => {
-		this.setState({ loading: true })
 		await addMarker(this.state)
 			.then(markerConfig => {
-				this.setState({ markers: [...this.state.markers, markerConfig], loading: false, pontoReferencia: null })
+				this.setState({ markers: [...this.state.markers, markerConfig], pontoReferencia: null })
 				this.setModalNewMarker(false, null)
 			})
 			.catch(err => console.log("ERR>> ", err))
 	}
 
 	directionsConfig = (props) => {
-		this.setState({ directions: props })
+		this.mapView && this.setState({ directions: props })
 	}
 
 	directionsTrace = (props) => {
-		this.setState({ directionsTrace: props })
+		this.mapView && this.setState({ directionsTrace: props })
 	}
 
 	stopRoute = (markerID) => {
@@ -238,10 +242,12 @@ export default class Map extends Component {
 			directions: false, directionsTrace: false,
 			calcDistance: false, routeCoordinates: []
 		}) : null
+		deactivateKeepAwake()
 	}
 
 	setCalcDistance = (calcDistance) => {
-		this.setState({ calcDistance })
+		this.mapView && this.setState({ calcDistance })
+		activateKeepAwake()
 	}
 
 	render() {
@@ -280,7 +286,7 @@ export default class Map extends Component {
 										// fixed marker closes bug
 										this.markers[index].showCallout()
 									}
-									onDeselect={() => this.setState({ directions: false })}
+									onDeselect={() => this.mapView && this.setState({ directions: false })}
 								>
 									<Image source={marker.tipoVaga == 0 ? disabledIcon : oldIcon} style={styles.markerIcon} />
 									<Callout style={{ height: 125, width: 160 }} >
@@ -339,7 +345,7 @@ export default class Map extends Component {
 										// fixed marker closes bug
 										this.markersInUse[index].showCallout()
 									}
-									onDeselect={() => this.setState({ directions: false })}
+									onDeselect={() => this.mapView && this.setState({ directions: false })}
 								>
 									<Image source={marker.tipoVaga == 0 ? disabledIcon : oldIcon} style={styles.markerIconUsed} />
 									<Callout style={{ height: 125, width: 160 }} >
@@ -406,9 +412,9 @@ export default class Map extends Component {
 
 				<View style={styles.iconGps}>
 					<TouchableOpacity disabled={this.state.iconGpsDisabled} onPress={() => {
-						this.setState({ iconGpsDisabled: true }, () => {
+						this.mapView && this.setState({ iconGpsDisabled: true }, () => {
 							setTimeout(() => {
-								this.setState({ iconGpsDisabled: false })
+								this.mapView && this.setState({ iconGpsDisabled: false })
 							}, 2000)
 						})
 						this.goToCurrentLocation(false, false)
