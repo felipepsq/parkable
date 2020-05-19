@@ -1,4 +1,5 @@
 import React from 'react'
+import { GOOGLEAPIKEY } from 'react-native-dotenv'
 import MapViewDirections from 'react-native-maps-directions'
 
 export default props => {
@@ -6,12 +7,11 @@ export default props => {
         <MapViewDirections
             origin={props.location}
             destination={props.currentMarkerCoord}
-            apikey={'AIzaSyCGCawFue0Z9eeazfeEBY3Sg2dJ4-XAXoM'}
+            apikey={GOOGLEAPIKEY}
             strokeWidth={5}
             strokeColor="black"
             optimizeWaypoints={true}
             onStart={(params) => {
-                props.component.directionsConfig('loading')
             }}
             onReady={result => {
                 props.component.directionsConfig('trace')
@@ -19,7 +19,7 @@ export default props => {
                 props.component.setCalcDistance(true)
                 setTimeout(() => {
                     props.component.goToCurrentLocation(false, true)
-                    props.component.directionsConfig(null)
+                    props.component.directionsConfig(false)
                 }, 1000);
             }}
             onError={(errorMessage) => { }}
