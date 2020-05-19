@@ -153,10 +153,20 @@ export default class Map extends Component {
 		)
 	}
 
-	goToCurrentLocation = async (init, mapsDirections) => {
+	checkLocationPermission = async (trace) => {
 		let { status } = await Permissions.askAsync(Permissions.LOCATION)
 		if (status !== 'granted') {
 			Alert.alert('Erro', 'Por favor, habilite o serviço de localização!')
+			this.mapView && this.setState({ location: null })
+		}
+		trace && status == 'granted' ? this.getLocationAsync(() => { }) : null
+		return status
+	}
+
+	goToCurrentLocation = async (init, mapsDirections) => {
+		var status = await this.checkLocationPermission(false)
+		if (status !== 'granted') {
+			return
 		}
 		else if (mapsDirections) {
 			this.getHeading(() => {
@@ -306,19 +316,20 @@ export default class Map extends Component {
 											<Text style={styles.referencia}>Referência: {marker.pontoReferencia}</Text>
 
 											<CalloutSubview onPress={() => {
-												this.setState({
-													directions: '', directionsTrace: true, currentMarkerCoord: {
-														latitude: marker.currentMarkerCoord.latitude,
-														longitude: marker.currentMarkerCoord.longitude
-													},
-													currentMarkerID: marker.id
-												})
+												this.state.location ?
+													this.setState({
+														directions: 'loading', directionsTrace: true, currentMarkerCoord: {
+															latitude: marker.currentMarkerCoord.latitude,
+															longitude: marker.currentMarkerCoord.longitude
+														},
+														currentMarkerID: marker.id
+													})
+													: this.checkLocationPermission(true)
 											}}>
 												{!this.state.directions &&
 													<Icon style={styles.traceRoute} name={"car"} size={22} color={'#0984e3'}>
 														<Text>Traçar rota</Text>
 													</Icon>}
-
 												{this.state.directions == 'loading' &&
 													<ActivityIndicator size="large" color="#0984e3" />}
 
