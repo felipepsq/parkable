@@ -90,8 +90,8 @@ export default class Faq extends Component {
                         <Text style={styles.simpleText}>Caso queira informar que uma das vagas cadastradas é inexistente,
                         basta você clicar sobre a vaga em questão, e a seguir pressionar na opção 'Reportar vaga' (imagem no item
                         acima), localizada na caixa de itens que apareceu sobre o mapa. A exclusão desta vaga é dada após a mesma
-                        ser confirmada pelo toque no botão "Sim" do pop-up aberto na parte inferior da tela, e depois de ter
-                        sido reportada por dois usuários diferentes.
+                        ser confirmada pelo toque no botão "Sim" do pop-up aberto na parte inferior da tela, e posterior a três 
+                        denúncias relatadas por usuários diferentes.
                         </Text>
                         <Image style={[styles.textPhoto, { width: '90%', height: 130 }]}
                             resizeMode='center' source={reportSpace} />
