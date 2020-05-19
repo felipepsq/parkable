@@ -180,22 +180,30 @@ export default class Map extends Component {
 			if (init) {
 				this.getLocationAsync(() => {
 					this.getHeading(() => {
+						this.setState({ iconGpsDisabled: true })
 						this.mapView && this.mapView.animateCamera({
 							center: this.state.location,
 							altitude: 8000
 						})
 						this.watchLocationAsync()
+						setTimeout(() => {
+							this.setState({ iconGpsDisabled: false })
+						}, 1000)
 					})
 				})
 			}
 			else {
-				this.state.directionsTrace ?
-					this.mapView && this.mapView.animateCamera({
+				this.state.directionsTrace ? (
+					this.setState({ iconGpsDisabled: true }),
+					this.mapView && !this.state.iconGpsDisabled && this.mapView.animateCamera({
 						center: this.state.location,
 						heading: this.state.heading,
 						altitude: 600
-					}) :
-					this.getHeading(() => {
+					}),
+					setTimeout(() => {
+						this.setState({ iconGpsDisabled: false })
+					}, 1000))
+					: this.getHeading(() => {
 						!this.state.location ? this.getLocationAsync(() => {
 							this.mapView && this.mapView.animateCamera({
 								center: this.state.location,
