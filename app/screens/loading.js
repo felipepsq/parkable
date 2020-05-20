@@ -22,9 +22,8 @@ export default Loading = (props) => {
     useEffect(() => {
         displaySplashScreen()
         AsyncStorage.getItem('UID')
-            .then(async (item) => {
+            .then(item => {
                 item ? setCurrentUser().then(() => navigate('Map')) : navigate('Logon')
-
             })
     }, [])
 

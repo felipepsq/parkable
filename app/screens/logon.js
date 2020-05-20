@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     StyleSheet,
     Text,
@@ -14,70 +14,87 @@ import {
 import AuthInput from '../components/authInput'
 import backgroundImage from '../../assets/imgs/backgroundImage.jpg'
 import ParkAbleIcon from '../../assets/imgs/icon.png'
-import { signup, signin } from '../utils/firebase'
+import { signUp, signIn } from '../utils/firebase'
 
-export default class Logon extends Component {
+export default Logon = (props) => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            fontLoaded: false,
-            stageNew: false,
-            name: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            loading: false,
-            successMessage: '',
-            animationMessage: new Animated.Value(0),
-        }
-    }
+    const [fontLoaded, setFontLoaded] = useState(false)
+    const [stageNew, setStageNew] = useState(false)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [successMessage, setSuccessMessage] = useState('')
+    const [validForm, setValidForm] = useState(false)
+    const [animationMessage] = useState(new Animated.Value(0))
 
-    async UNSAFE_componentWillMount() {
+    const loadFont = async () => {
         await Expo.Font.loadAsync({
             'Ubuntu': require('../../assets/fonts/Ubuntu.ttf'),
             'Ubuntu_bold': require('../../assets/fonts/Ubuntu_bold.ttf'),
         })
-        this.setState({ fontLoaded: true })
+        setFontLoaded(true)
     }
 
+    useEffect(() => {
+        loadFont()
+    }, [])
+
+    useEffect(() => {
+        const validations = []
+
+        validations.push(email && email.includes('@'))
+        validations.push(password && password.length >= 6)
+
+        stageNew ? (validations.push(confirmPassword),
+            validations.push(password === confirmPassword)) : null
+
+        setValidForm(validations.reduce((all, v) => all && v))
+    }, [email, password, confirmPassword, stageNew])
+
     signup = async () => {
-        this.setState({ loading: true })
-        await signup(this.state.email, this.state.password)
+        await signUp(email, password)
             .then((msg) => {
-                this.setState({ successMessage: msg, password: '', confirmPassword: '' })
-                this.animateMessage()
-                this.setState({ loading: false, stageNew: false })
+                setSuccessMessage(msg)
+                setPassword('')
+                setConfirmPassword('')
+                setLoading(false)
+                animateMessage()
+                setStageNew(false)
             })
             .catch(msg => {
                 Alert.alert('Erro', 'Este email já está sendo usado!')
-                this.setState({ loading: false, password: '', confirmPassword: '' })
+                setLoading(false)
+                setPassword('')
+                setConfirmPassword('')
             })
     }
 
-    signin = async () => {
-        await signin(this.state.email, this.state.password)
+    const signin = async () => {
+        await signIn(email, password)
             .then(() => {
-                this.props.navigation.navigate('Faq', { read: false })
+                setLoading(false)
+                props.navigation.navigate('Faq', { read: false })
             })
             .catch(erro => {
+                setLoading(false)
+                setPassword('')
                 Alert.alert('Erro', 'Usuário/senha incorreto(a)')
             })
-        this.setState({ loading: false })
     }
 
-    signinOrSignup = () => {
-        this.setState({ loading: true })
-        this.state.stageNew ? this.signup() : this.signin()
+    const signinOrSignup = () => {
+        setLoading(true)
+        stageNew ? signup() : signin()
     }
 
-    animateMessage = () => {
-        Animated.timing(this.state.animationMessage, {
+    const animateMessage = () => {
+        Animated.timing(animationMessage, {
             toValue: 1,
             duration: 600
         }).start(() => {
             setTimeout(() => {
-                Animated.timing(this.state.animationMessage, {
+                Animated.timing(animationMessage, {
                     toValue: 0,
                     timing: 1200
                 }).start();
@@ -85,87 +102,70 @@ export default class Logon extends Component {
         })
     }
 
-    render() {
-        const validations = []
+    return (
+        <ImageBackground source={backgroundImage}
+            style={styles.background}>
+            <Image style={styles.parkAbleIcon} source={ParkAbleIcon} />
 
-        validations.push(this.state.email && this.state.email.includes('@'))
-        validations.push(this.state.password && this.state.password.length >= 6)
+            {loading ?
+                <ActivityIndicator style={styles.activityIndicator} size="large" color="#2c3e50" /> : null}
 
-        this.state.stageNew ? (validations.push(this.state.confirmPassword),
-            validations.push(this.state.password === this.state.confirmPassword)) : null
+            {successMessage ?
+                <Animated.View style={[styles.successMessage, { opacity: animationMessage }]} >
+                    <Text style={styles.successMessageText}>{successMessage}</Text>
+                </Animated.View>
+                : null}
 
-        const validForm = validations.reduce((all, v) => all && v)
-
-        return (
-            <ImageBackground source={backgroundImage}
-                style={styles.background}>
-                <Image style={styles.parkAbleIcon} source={ParkAbleIcon} />
-
-                {this.state.loading ?
-                    <ActivityIndicator style={styles.activityIndicator} size="large" color="#2c3e50" /> : null}
-
-                {this.state.successMessage ?
-                    <Animated.View style={[styles.successMessage, { opacity: this.state.animationMessage }]} >
-                        <Text style={styles.successMessageText}>{this.state.successMessage}</Text>
-                    </Animated.View>
-                    : null}
-
-                <KeyboardAvoidingView behavior="padding">
-                    {this.state.fontLoaded ?
-                        <View style={styles.container}>
-                            <AuthInput icon='at' placeholder='E-mail'
+            <KeyboardAvoidingView behavior="padding">
+                {fontLoaded ?
+                    <View style={styles.container}>
+                        <AuthInput icon='at' placeholder='E-mail'
+                            style={styles.input}
+                            value={email}
+                            onChangeText={email => setEmail(email)} />
+                        <AuthInput icon='lock' secureTextEntry={true}
+                            placeholder='Senha'
+                            style={styles.input}
+                            value={password}
+                            onChangeText={pass => setPassword(pass)} />
+                        {stageNew &&
+                            <AuthInput icon='asterisk'
+                                secureTextEntry={true} placeholder='Confirmação'
                                 style={styles.input}
-                                value={this.state.email}
-                                onChangeText={email =>
-                                    this.setState({ email })} />
-                            <AuthInput icon='lock' secureTextEntry={true}
-                                placeholder='Senha'
-                                style={styles.input}
-                                value={this.state.password}
-                                onChangeText={password =>
-                                    this.setState({ password })} />
-                            {this.state.stageNew &&
-                                <AuthInput icon='asterisk'
-                                    secureTextEntry={true} placeholder='Confirmação'
-                                    style={styles.input}
-                                    value={this.state.confirmPassword}
-                                    onChangeText={confirmPassword =>
-                                        this.setState({ confirmPassword })} />}
+                                value={confirmPassword}
+                                onChangeText={confirm => setConfirmPassword(confirm)} />}
 
-                            <View style={{ display: 'flex', flexDirection: 'row' }}>
-                                <View style={{ width: '50%' }}>
-                                    <TouchableOpacity
-                                        disabled={this.state.loading}
-                                        style={[styles.cadastrarOrLogin,
-                                        this.state.loading ? { backgroundColor: '#AAA' } : {}
-                                        ]}
-                                        onPress={() => this.setState({
-                                            stageNew: !this.state.stageNew
-                                        })}>
-                                        <Text style={styles.cadastrarOrLoginText}>
-                                            {this.state.stageNew ? 'Login'
-                                                : 'Cadastrar'}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={{ width: '50%' }}>
-                                    <TouchableOpacity disabled={!validForm || this.state.loading}
-                                        onPress={this.signinOrSignup}>
-                                        <View style={[styles.button, !validForm || this.state.loading ? { backgroundColor: '#AAA' } : {}]}>
-                                            <Text style={styles.buttonText}>
-                                                {this.state.stageNew ? 'Registrar' : 'Entrar'}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
+                        <View style={{ display: 'flex', flexDirection: 'row' }}>
+                            <View style={{ width: '50%' }}>
+                                <TouchableOpacity
+                                    disabled={loading}
+                                    style={[styles.cadastrarOrLogin,
+                                    loading ? { backgroundColor: '#AAA' } : {}
+                                    ]}
+                                    onPress={() => setStageNew(!stageNew)}>
+                                    <Text style={styles.cadastrarOrLoginText}>
+                                        {stageNew ? 'Login'
+                                            : 'Cadastrar'}</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ width: '50%' }}>
+                                <TouchableOpacity
+                                    onPress={signinOrSignup}>
+                                    <View style={[styles.button, !validForm || loading ? { backgroundColor: '#AAA' } : {}]}>
+                                        <Text style={styles.buttonText}>
+                                            {stageNew ? 'Registrar' : 'Entrar'}</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                        :
-                        null
-                    }
+                    </View>
+                    :
+                    null
+                }
 
-                </KeyboardAvoidingView>
-            </ImageBackground >
-        )
-    }
+            </KeyboardAvoidingView>
+        </ImageBackground >
+    )
 }
 
 const styles = StyleSheet.create({

@@ -47,8 +47,7 @@ export const signOut = () => {
     currentUser = null
 }
 
-export const signin = (email, password) => {
-
+export const signIn = (email, password) => {
     return new Promise((resolve, reject) => {
         firebase
             .auth()
@@ -64,7 +63,7 @@ export const signin = (email, password) => {
     })
 }
 
-export const signup = (email, password) => {
+export const signUp = (email, password) => {
 
     return new Promise((resolve, reject) => {
         firebase
