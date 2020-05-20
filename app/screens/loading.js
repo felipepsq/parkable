@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import {
     StyleSheet,
     View,
@@ -6,39 +6,29 @@ import {
 } from 'react-native'
 import { AsyncStorage } from 'react-native'
 import { setCurrentUser } from '../utils/firebase'
+import * as SplashScreen from 'expo-splash-screen'
 
-export default class Loading extends Component {
+export default Loading = (props) => {
 
-    render() {
+    const displaySplashScreen = async () => {
+        await SplashScreen.preventAutoHideAsync();
+    }
+
+    const navigate = async (route) => {
+        await SplashScreen.hideAsync()
+        props.navigation.navigate(route)
+    }
+
+    useEffect(() => {
+        displaySplashScreen()
         AsyncStorage.getItem('UID')
-            .then((item) => {
-                if (item != null) {
-                    setCurrentUser()
-                    AsyncStorage.getItem('faqRead')
-                        .then(read => {
-                            read ? this.props.navigation.navigate('Map') : this.props.navigation.navigate('Faq', { read })
-                        })
-                }
-                else {
-                    this.props.navigation.navigate('Logon')
-                }
-            });
-        return (
-            <View style={[styles.container, styles.horizontal]}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-        )
-    }
-}
+            .then(async (item) => {
+                item ? setCurrentUser().then(() => navigate('Map')) : navigate('Logon')
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center'
-    },
-    horizontal: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        padding: 10
-    }
-})
+            })
+    }, [])
+
+    return (
+        <View></View>
+    )
+}

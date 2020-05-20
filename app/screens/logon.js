@@ -58,7 +58,7 @@ export default class Logon extends Component {
     signin = async () => {
         await signin(this.state.email, this.state.password)
             .then(() => {
-                this.props.navigation.navigate('Faq')
+                this.props.navigation.navigate('Faq', { read: false })
             })
             .catch(erro => {
                 Alert.alert('Erro', 'Usuário/senha incorreto(a)')

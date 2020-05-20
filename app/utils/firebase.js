@@ -31,10 +31,14 @@ export const getCurrentUser = () => {
 }
 
 export const setCurrentUser = () => {
-    AsyncStorage.getItem('UID')
-        .then(user => {
-            currentUser = user
-        })
+    return new Promise((resolve) => {
+        AsyncStorage.getItem('UID')
+            .then(user => {
+                currentUser = user
+                resolve()
+            })
+    })
+
 }
 
 export const signOut = () => {
