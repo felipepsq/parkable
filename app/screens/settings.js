@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { signOut } from '../utils/firebase'
 import {
     StyleSheet,
@@ -8,58 +8,55 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-export default class Settings extends Component {
+export default Settings = (props) => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            fontLoaded: false,
-        }
-    }
+    const [fontLoaded, setFontLoaded] = useState(false)
 
-    async UNSAFE_componentWillMount() {
+    const loadFont = async () => {
         await Expo.Font.loadAsync({
             'Ubuntu': require('../../assets/fonts/Ubuntu.ttf'),
             'Ubuntu_bold': require('../../assets/fonts/Ubuntu_bold.ttf'),
         })
-        this.setState({ fontLoaded: true })
+        setFontLoaded(true)
     }
 
+    useEffect(() => {
+        loadFont()
+    }, [])
 
-    disconnect() {
+
+    disconnect = () => {
         signOut()
-        this.props.navigation.navigate('Logon')
+        props.navigation.navigate('Logon')
     }
 
-    render() {
-        return (
-            this.state.fontLoaded ?
-                <View style={styles.container}>
-                    <View style={styles.iconBar}>
-                        <TouchableOpacity onPress={() => this.props.navigation.openDrawer()}>
-                            <Icon name='bars' color={'white'} size={32} />
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity style={styles.quiz} onPress={() => { }} >
-                        <Text style={styles.quizText}>
-                            Questionário
-                        </Text>
+    return (
+        fontLoaded ?
+            <View style={styles.container}>
+                <View style={styles.iconBar}>
+                    <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+                        <Icon name='bars' color={'white'} size={32} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.exit} onPress={() => this.disconnect()} >
-                        <Text style={styles.exitText}>
-                            Sair
+                </View>
+                <TouchableOpacity style={styles.quiz} onPress={() => { }} >
+                    <Text style={styles.quizText}>
+                        Questionário
                         </Text>
-                    </TouchableOpacity>
-                    <View style={styles.about}>
-                        <Text style={styles.title}>Desenvolvido por: </Text>
-                        <Text style={styles.text}>Felipe Pasqualotto </Text>
-                        <Text style={styles.text}>felipe.psq@outlook.com</Text>
-                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.exit} onPress={() => disconnect()} >
+                    <Text style={styles.exitText}>
+                        Sair
+                        </Text>
+                </TouchableOpacity>
+                <View style={styles.about}>
+                    <Text style={styles.title}>Desenvolvido por: </Text>
+                    <Text style={styles.text}>Felipe Pasqualotto </Text>
+                    <Text style={styles.text}>felipe.psq@outlook.com</Text>
+                </View>
 
-                </View > :
-                <View></View>
-        )
-    }
+            </View > :
+            <View></View>
+    )
 }
 
 const styles = StyleSheet.create({
