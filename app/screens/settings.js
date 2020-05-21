@@ -25,7 +25,7 @@ export default Settings = (props) => {
     }, [])
 
 
-    disconnect = () => {
+    const disconnect = () => {
         signOut()
         props.navigation.navigate('Logon')
     }

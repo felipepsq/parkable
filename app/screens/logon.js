@@ -52,7 +52,7 @@ export default Logon = (props) => {
         setValidForm(validations.reduce((all, v) => all && v))
     }, [email, password, confirmPassword, stageNew])
 
-    signup = async () => {
+    const signup = async () => {
         await signUp(email, password)
             .then((msg) => {
                 setSuccessMessage(msg)

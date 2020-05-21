@@ -180,12 +180,12 @@ export default class Map extends Component {
 			if (init) {
 				this.getLocationAsync(() => {
 					this.getHeading(() => {
-						this.setState({ iconGpsDisabled: true })
-						this.mapView && this.mapView.animateCamera({
+						this.mapView && !this.state.iconGpsDisabled && this.mapView.animateCamera({
 							center: this.state.location,
 							altitude: 8000
 						})
 						this.watchLocationAsync()
+						this.setState({ iconGpsDisabled: true })
 						setTimeout(() => {
 							this.setState({ iconGpsDisabled: false })
 						}, 1000)
@@ -194,15 +194,12 @@ export default class Map extends Component {
 			}
 			else {
 				this.state.directionsTrace ? (
-					this.setState({ iconGpsDisabled: true }),
-					this.mapView && !this.state.iconGpsDisabled && this.mapView.animateCamera({
+					this.mapView && this.mapView.animateCamera({
 						center: this.state.location,
 						heading: this.state.heading,
 						altitude: 600
-					}),
-					setTimeout(() => {
-						this.setState({ iconGpsDisabled: false })
-					}, 1000))
+					})
+				)
 					: this.getHeading(() => {
 						!this.state.location ? this.getLocationAsync(() => {
 							this.mapView && this.mapView.animateCamera({
@@ -431,12 +428,12 @@ export default class Map extends Component {
 
 				<View style={styles.iconGps}>
 					<TouchableOpacity disabled={this.state.iconGpsDisabled} onPress={() => {
+						this.goToCurrentLocation(false, false)
 						this.mapView && this.setState({ iconGpsDisabled: true }, () => {
 							setTimeout(() => {
 								this.mapView && this.setState({ iconGpsDisabled: false })
 							}, 2000)
 						})
-						this.goToCurrentLocation(false, false)
 
 					}}>
 						<Icon2 name='my-location' color={'white'} size={32} />
