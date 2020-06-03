@@ -124,14 +124,12 @@ export default class Map extends Component {
 					let distanceToSpace = getDistance(location, this.state.currentMarkerCoord)
 					if (distanceToSpace <= 15 && this.refs.ModalUsingSpace) {
 						// if (this.refs.ModalUsingSpace) {
-						setTimeout(() => {
-							this.setCalcDistance(false)
-							this.directionsTrace(false)
-							this.refs.ModalUsingSpace.setModalUsingSpace({
-								active: true,
-								sameUserUID: null
-							}, this.state.currentMarkerID)
-						}, 1)
+						this.setCalcDistance(false)
+						this.directionsTrace(false)
+						this.refs.ModalUsingSpace.setModalUsingSpace({
+							active: true,
+							sameUserUID: null
+						}, this.state.currentMarkerID)
 					}
 				}
 				else {
@@ -201,18 +199,13 @@ export default class Map extends Component {
 					})
 				)
 					: this.getHeading(() => {
-						!this.state.location ? this.getLocationAsync(() => {
+						this.getLocationAsync(() => {
 							this.mapView && this.mapView.animateCamera({
 								center: this.state.location,
 								heading: this.state.heading,
 								altitude: 600
 							})
 						})
-							: this.mapView && this.mapView.animateCamera({
-								center: this.state.location,
-								heading: this.state.heading,
-								altitude: 600
-							})
 					})
 			}
 		}
