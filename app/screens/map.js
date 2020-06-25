@@ -59,7 +59,6 @@ export default class Map extends Component {
 			else {
 				if (this.mapView && (e.magHeading > (this.state.heading + 50) || e.magHeading < (this.state.heading - 50))) {
 					this.setState({ heading: e.magHeading })
-
 					this.mapView && this.state.directionsTrace && !this.state.iconGpsDisabled ?
 						(this.mapView.animateCamera({
 							center: this.state.location,
@@ -98,7 +97,12 @@ export default class Map extends Component {
 			newLocation => {
 				let { coords } = newLocation
 				if (this.mapView) {
-					coords.accuracy > 12 ? this.setState({ lowAccuracy: true }) : this.setState({ lowAccuracy: false })
+					if (coords.accuracy > 12 && !this.state.lowAccuracy) {
+						this.setState({ lowAccuracy: true })
+					}
+					else if (coords.accuracy < 12 && this.state.lowAccuracy) {
+						this.setState({ lowAccuracy: false })
+					}
 				}
 				let location = {
 					latitude: coords.latitude,
@@ -108,12 +112,12 @@ export default class Map extends Component {
 				}
 				if (this.state.directionsTrace && this.state.calcDistance && this.mapView) {
 					let newCoordinate = { latitude: coords.latitude, longitude: coords.longitude }
-					this.setState({
+					coords.accuracy < 25 ? this.setState({
 						routeCoordinates: this.state.routeCoordinates.concat([newCoordinate]),
-					})
+					}) : null
 					let stateDistance = getDistance(location, this.state.location)
 
-					stateDistance > 30 && this.mapView ? (
+					stateDistance > 30 && coords.accuracy < 25 && this.mapView ? (
 						this.setState({ location: coords }),
 						this.mapView.animateCamera({
 							center: this.state.location,
