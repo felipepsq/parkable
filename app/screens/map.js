@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import {
-	StyleSheet,
 	Text,
 	View,
 	TouchableOpacity,
@@ -8,6 +7,7 @@ import {
 	ActivityIndicator,
 	Image,
 } from 'react-native'
+import mapStyle from './mapStyle'
 import { Marker, Callout, CalloutSubview, Polyline } from 'react-native-maps'
 import MapView from "react-native-map-clustering"
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -300,22 +300,22 @@ export default class Map extends Component {
 									}
 									onDeselect={() => this.mapView && this.setState({ directions: false })}
 								>
-									<Image source={marker.tipoVaga == 0 ? disabledIcon : oldIcon} style={styles.markerIcon} />
+									<Image source={marker.tipoVaga == 0 ? disabledIcon : oldIcon} style={mapStyle.markerIcon} />
 									<Callout style={{ height: 125, width: 160 }} >
-										<View style={styles.containerSubView}>
+										<View style={mapStyle.containerSubView}>
 											<CalloutSubview onPress={() =>
 												this.refs.ModalReportMarker.setModalReportMarker({
 													active: true,
 													markerID: marker.id
 												})}
-												style={styles.reportSpace}>
+												style={mapStyle.reportSpace}>
 												<Icon name={"exclamation-triangle"} size={18} color="#c0392b">
 													<Text style={{ fontSize: 16 }}> Reportar vaga</Text>
 												</Icon>
 
 											</CalloutSubview>
 
-											<Text style={styles.referencia}>Referência: {marker.pontoReferencia}</Text>
+											<Text style={mapStyle.referencia}>Referência: {marker.pontoReferencia}</Text>
 
 											<CalloutSubview onPress={() => {
 												this.state.location ?
@@ -329,7 +329,7 @@ export default class Map extends Component {
 													: this.checkLocationPermission(true)
 											}}>
 												{!this.state.directions &&
-													<Icon style={styles.traceRoute} name={"car"} size={22} color={'#0984e3'}>
+													<Icon style={mapStyle.traceRoute} name={"car"} size={22} color={'#0984e3'}>
 														<Text>Traçar rota</Text>
 													</Icon>}
 												{this.state.directions == 'loading' &&
@@ -360,7 +360,7 @@ export default class Map extends Component {
 									}
 									onDeselect={() => this.mapView && this.setState({ directions: false })}
 								>
-									<Image source={marker.tipoVaga == 0 ? disabledIcon : oldIcon} style={styles.markerIconUsed} />
+									<Image source={marker.tipoVaga == 0 ? disabledIcon : oldIcon} style={mapStyle.markerIconUsed} />
 									<Callout style={{ height: 125, width: 160 }} >
 										<View style={{
 											flex: 1,
@@ -369,20 +369,20 @@ export default class Map extends Component {
 											alignItems: 'center',
 											justifyContent: "space-around"
 										}}>
-											<View style={styles.containerSubView}>
+											<View style={mapStyle.containerSubView}>
 												<CalloutSubview onPress={() =>
 													this.refs.ModalReportMarker.setModalReportMarker({
 														active: true,
 														markerID: marker.id
 													})}
-													style={styles.reportSpace}>
+													style={mapStyle.reportSpace}>
 													<Icon name={"exclamation-triangle"} size={18} color="#c0392b">
 														<Text style={{ fontSize: 16 }}> Reportar vaga</Text>
 													</Icon>
 
 												</CalloutSubview>
 
-												<Text style={styles.title}>Vaga em uso!</Text>
+												<Text style={mapStyle.title}>Vaga em uso!</Text>
 												{getCurrentUser() == marker.properties.userUsing
 													?
 													<View style={{ textAlign: 'center', alignItems: 'center' }}>
@@ -391,7 +391,7 @@ export default class Map extends Component {
 															sameUserUID: getCurrentUser() == marker.properties.userUsing
 														}, marker.id
 														)}
-															style={styles.exitSpace}>
+															style={mapStyle.exitSpace}>
 															<Icon name={"check"} size={20} color="#27ae60">
 																<Text style={{ fontSize: 20 }}>Liberar vaga</Text>
 															</Icon>
@@ -417,13 +417,13 @@ export default class Map extends Component {
 
 				</MapView >
 
-				<View style={styles.iconBar}>
+				<View style={mapStyle.iconBar}>
 					<TouchableOpacity onPress={() => this.props.navigation.openDrawer()}>
 						<Icon name='bars' color={'white'} size={32} />
 					</TouchableOpacity>
 				</View>
 
-				<View style={styles.iconGps}>
+				<View style={mapStyle.iconGps}>
 					<TouchableOpacity disabled={this.state.iconGpsDisabled} onPress={() => {
 						this.goToCurrentLocation(false, false)
 						this.mapView && this.setState({ iconGpsDisabled: true }, () => {
@@ -437,12 +437,12 @@ export default class Map extends Component {
 					</TouchableOpacity>
 				</View>
 
-				{this.state.loadingMarkers && <View style={styles.loadingMarkers}>
-					<ActivityIndicator style={styles.activityIndicatorInit} size="large" color="blue" />
+				{this.state.loadingMarkers && <View style={mapStyle.loadingMarkers}>
+					<ActivityIndicator style={mapStyle.activityIndicatorInit} size="large" color="blue" />
 				</View>}
 
 				{this.state.directionsTrace && this.state.location &&
-					<View style={styles.iconStopRoute}>
+					<View style={mapStyle.iconStopRoute}>
 						<TouchableOpacity onPress={() => this.stopRoute(this.state.currentMarkerID)}>
 							<Icon2 name='clear' color={'white'} size={45} />
 						</TouchableOpacity>
@@ -455,7 +455,7 @@ export default class Map extends Component {
 
 				<ModalReportMarker component={this} ref='ModalReportMarker' />
 
-				{this.state.lowAccuracy && <View style={styles.lowAccuracy}>
+				{this.state.lowAccuracy && <View style={mapStyle.lowAccuracy}>
 					<Text>GPS sem precisão!</Text>
 				</View>}
 
@@ -463,114 +463,3 @@ export default class Map extends Component {
 		)
 	}
 }
-
-const styles = StyleSheet.create({
-	iconBar: {
-		position: 'absolute',
-		top: 50,
-		left: 20,
-		alignSelf: 'flex-start',
-		backgroundColor: '#636e72',
-		borderRadius: 6,
-		borderTopWidth: 1,
-		borderBottomWidth: 1,
-		borderRightWidth: 3,
-		borderLeftWidth: 3,
-		borderColor: '#636e72'
-	},
-	iconGps: {
-		position: 'absolute',
-		bottom: 70,
-		right: 20,
-		alignSelf: 'flex-end',
-		backgroundColor: '#636e72',
-		borderRadius: 25,
-		borderWidth: 2,
-		borderColor: '#636e72'
-	},
-	loadingMarkers: {
-		position: 'absolute',
-		top: 40,
-		alignSelf: 'center',
-	},
-	iconStopRoute: {
-		position: 'absolute',
-		bottom: 65,
-		left: 10,
-		alignSelf: 'flex-start',
-		backgroundColor: '#c23616',
-		borderRadius: 25
-	},
-	title: {
-		color: '#c0392b',
-		fontSize: 25,
-		alignSelf: 'center',
-		alignContent: 'center',
-		textAlign: 'center'
-	},
-	containerSubView: {
-		flex: 1,
-		justifyContent: 'space-between'
-	},
-	reportSpace: {
-		alignSelf: 'center',
-		borderColor: '#c0392b',
-		borderWidth: 2,
-		borderRadius: 10,
-		padding: 4,
-	},
-	referencia: {
-		alignSelf: 'center',
-		textAlign: 'center',
-		fontSize: 15,
-		fontWeight: '500'
-	},
-	traceRoute: {
-		alignSelf: 'center',
-		borderColor: '#0984e3',
-		borderWidth: 2,
-		borderRadius: 10,
-		padding: 3,
-	},
-	exitSpace: {
-		alignSelf: 'center',
-		borderColor: '#27ae60',
-		borderWidth: 2,
-		borderRadius: 10,
-		padding: 3,
-	},
-	activityIndicatorInit: {
-		width: 45,
-		height: 45,
-		marginTop: 60,
-		paddingLeft: 3,
-		paddingTop: 4,
-		backgroundColor: 'white',
-		borderRadius: 15
-	},
-	markerIcon: {
-		height: 40,
-		width: 40,
-		tintColor: 'white',
-		backgroundColor: '#0652DD',
-		borderRadius: 10,
-	},
-	markerIconUsed: {
-		height: 40,
-		width: 40,
-		tintColor: 'white',
-		backgroundColor: '#EA2027',
-		borderRadius: 10,
-	},
-	lowAccuracy: {
-		height: 25,
-		position: 'absolute',
-		top: 55,
-		alignSelf: 'center',
-		justifyContent: 'center',
-		backgroundColor: '#f9ca24',
-		borderRadius: 5,
-		borderWidth: 2,
-		borderColor: '#f9ca24'
-	}
-})
